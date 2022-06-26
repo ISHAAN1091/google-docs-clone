@@ -1,6 +1,7 @@
 # Google Docs Clone
 
 This is a clone of google documents editor.
+![](./public/projectDemo.png)
 
 ## Features
 
