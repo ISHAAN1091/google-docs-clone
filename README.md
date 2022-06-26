@@ -1,6 +1,10 @@
 # Google Docs Clone
 
+<<<<<<< HEAD
 This is a clone of the popular Google Docx Editor.
+=======
+This is a clone of Google Word Docx.
+>>>>>>> 7da8fc1e17c063d77fd7329ba88a720ff3985995
 ![](./public/projectDemo.png)
 
 ## Features
