@@ -1,4 +1,4 @@
-import TextEditor from "./textEditor";
+import TextEditor from "./Components/textEditor";
 import {
     BrowserRouter as Router,
     Routes,

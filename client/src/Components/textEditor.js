@@ -4,6 +4,10 @@ import "quill/dist/quill.snow.css";
 import { io } from "socket.io-client";
 import { useParams } from "react-router-dom";
 
+// time interval after document auto saves
+const SAVE_INTERVAL_MS = 2000;
+
+// toolbar customization for quill js
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
     [{ font: [] }],
@@ -21,6 +25,7 @@ export default function TextEditor() {
     const [socket, setSocket] = useState();
     const [quill, setQuill] = useState();
 
+    // called only once to connect to socket instance
     useEffect(() => {
         const s = io("http://localhost:3001");
         setSocket(s);
@@ -29,6 +34,7 @@ export default function TextEditor() {
         };
     }, []);
 
+    // called to load the document from the database if it exists or create a new one
     useEffect(() => {
         if (socket == null || quill == null) return;
 
@@ -40,6 +46,20 @@ export default function TextEditor() {
         socket.emit("get-document", documentId);
     }, [socket, quill, documentId]);
 
+    // called to save the document automatically after SAVE_INTERVAL_MS milliseconds
+    useEffect(() => {
+        if (socket == null || quill == null) return;
+
+        const interval = setInterval(() => {
+            socket.emit("save-document", quill.getContents());
+        }, SAVE_INTERVAL_MS);
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [socket, quill]);
+
+    // called to enable receiving changes in the document happening from other instances of the document
     useEffect(() => {
         if (socket == null || quill == null) return;
         const handler = (delta) => {
@@ -51,6 +71,7 @@ export default function TextEditor() {
         };
     }, [socket, quill]);
 
+    // called to send the changes made by the user in the current instance of the document to be reflected elsewhere
     useEffect(() => {
         if (socket == null || quill == null) return;
         const handler = (delta, oldDelta, source) => {
@@ -63,6 +84,7 @@ export default function TextEditor() {
         };
     }, [socket, quill]);
 
+    // called to init quill editor
     const wrapperRef = useCallback((wrapper) => {
         if (wrapper == null) return;
 
